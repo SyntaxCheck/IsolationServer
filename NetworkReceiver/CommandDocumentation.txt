@@ -1,0 +1,178 @@
+﻿--------------------------------------------
+------------      TestPing     -------------
+--------------------------------------------
+(Optional)
+Use: Test to see if the server is online.
+Parameters: None
+Command: TestPing<END>
+Responses:
+	- "Online" - Indicates the server is online
+
+--------------------------------------------
+-----------      Connection     ------------
+--------------------------------------------
+(Required)
+Use: Connect to the server. This command must be called before any other command (Except TestPing) can be called. Once connected you can do any number of matches under the single connection.
+Parameters: 
+	- {User} The name for your client. This user does not need to be unique accross all game sessions. It does need to be unique for the individual match.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+	- {Is X,Y Coordinate format} Accepts "T" or "F". If your coordinates are passed in as (X,Y) with the upperleft corner being (0,0) then pass "T". Passing "F" will assume you are passing in (row,column).
+	- Optional {GridWidth} Optional parameter, sets the width of the grid. If not passed in the default is 7. If you pass in GridWidth you must pass in GridHeight.
+	- Optional {GridHeight} Optional parameter, sets the height of the grid. If not passed in the default is 7. If you pass in GridHeight you must pass in GridWidth
+Command: Connection|{User}|{Channel}|{Channel Password}|{Is X,Y Coordinate format}|{GridWidth}|{GridHeight}<END>
+Responses:
+	- "Accept|{Return Token}|{Number of Clients connected}" - Connection was accepted
+		- {Return Token} Unique token that will be used for all subsequent server calls. The token is unique to the Session/Channel combo.
+		- {Number of Clients connected} Number of clients connected including your client.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+	- "Reject|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was rejected.
+
+--------------------------------------------
+-----------      GetStatus     -------------
+--------------------------------------------
+(Required)
+Use: After you have connected to the server use this command can be used to start a match. Both users will need to be connected and called the Start command before you can make moves. Continue to call GetStatus while you wait for the opponent.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+Command: GetStatus|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "WaitForConnection" - Opponent has not connected yet. Do some type of thread sleep here and check back later.
+	- "WaitingForOpponentToGetReady" - Both parties have connected. Both parties have not called the "Start" command yet. Call the start command and continue to call GetStatus. Even after you have called the start command this will return the same value so do not call this command again
+	- "YourMove" - It is your turn to call the MakeMove command. Before calling the MakeMove command you will want to call the GetOppMove command to check if the opponent has made their move.
+	- "OpponentsMove" - It is your opponents move. Do a thread sleep in your function while you wait for them to complete their move.
+	- "Winner" - You have won. Call the start command to start a new match
+	- "Loser" - You have lost. Call the start command to start a new match
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+-------------      Start     ---------------
+--------------------------------------------
+(Required)
+Use: After you have connected to the server use this command can be used to start a match. Both users will need to be connected and called the Start command before you can make moves. Continue to call GetStatus while you wait for the opponent.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+	- Optional {Client Algorithm} This optional setting can hold the current algorithm for your AI.
+	- Optional {Client Version} This optional setting can hold your client software version.
+	- Optional {Client Config} The custom configuration of the client. You can set anything you want here. The server will store the results with this setting included.
+Command: Start|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "Accept|{Opponents Name}" - Start was accepted
+		- {Opponents Name} Unique token that will be used for all subsequent server calls. The token is unique to the Session/Channel combo.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+	- "WaitForConnection" - You tried to call the start command before an opponent was in the channel. You should not call the Start command until GetStatus tells you: "WaitingForOpponentToGetReady"
+
+--------------------------------------------
+------      GetOpponentLastMove     --------
+--------------------------------------------
+(Required)
+Use: When GetStatus returns "YourTurn" you can use this command to get your opponents last move before calculating your next move.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+Command: GetOpponentLastMove|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "({First Coordinate},{Second Coordinate})" - If the opponent has made a move it returns their last move based on your connection format.
+		- {First Coordinate} If you set the {Is X,Y Coordinate format} to "T" on the connection then this will return the X value where (0,0) is the upper left corner. Otherwise the {First Coordinate} will return the row.
+		- {Second Coordinate} If you set the {Is X,Y Coordinate format} to "T" on the connection then this will return the Y value where (0,0) is the upper left corner. Otherwise the {Second Coordinate} will return the column.
+	- "" - If the opponent has not made a move yet this command will return an empty string.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+------------      MakeMove     -------------
+--------------------------------------------
+(Required)
+Use: When GetStatus returns "YourTurn" you can use this command to send your move to the server. Prior to sending this command you should call GetOpponentLastMove.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+	- {({First Coordinate},{Second Coordinate})} The coordinate for your move. 
+Command: MakeMove|{Token}|{Channel}|{Channel Password}|{({First Coordinate},{Second Coordinate})}<END>
+Responses:
+	- "Accept" - Your move was available and valid.
+	- "Reject|{Reason}" - Your move was rejected by the server.
+		- {Reason} The second parameter holds the reason why the move was rejected.
+	- "NotYourTurn|{Explaination}" - It is not your turn and you cannot make your move until it is your turn.
+		- {Explaination} The second parameter holds an explaination on how to use this call.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+------------      GetBoard     -------------
+--------------------------------------------
+(Optional)
+Use: Command will return the current board. Each cell is separated by a comma and each row is separated by a newline character.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel. 
+Command: GetBoard|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "-,-,x - {PlayerOne}({MoveNumer}),x - {PlayerTwo}({MoveNumer}),-,-,{PlayerOne}({MoveNumer}),-,{PlayerTwo}({MoveNumer})\r\n-,-,-,-,-,-..." - Your move was available and valid.
+		- "-" Means empty space.
+		- "x - " Means the space is blocked and the text after "-" will describe who blocked the space and what move number it was.
+		- {PlayerOne} PlayerOne's name in text.
+		- {PlayerTwo} PlayerTwo's name in text.
+		- {MoveNumer} The sequential Move number. First move = 1, second move = 2 etc.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+--------      GetSessionStats     ----------
+--------------------------------------------
+(Optional)
+Use: Call this command to get session information.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+Command: GetSessionStats|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "{PlayerOne}: {PlayerOneWinCount}|{PlayerTwo}: {PlayerTwoWinCount}" - Your move was available and valid.
+		- {PlayerOne} First player connected to the server. You will need to check to see if your name matches.
+		- {PlayerTwo} Second player connected to the server. You will need to check to see if your name matches.
+		- {PlayerOneWinCount} First player connected to the server's number of wins.
+		- {PlayerTwoWinCount} Second player connected to the server's number of wins.
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+-------------      Forfeit     -------------
+--------------------------------------------
+(Optional)
+Use: Call this command forfeit the match if you client has detected you have lost but the GetStatus reports "YourTurn". Could be used to speed up matches. Call the Start command again to start a new  match.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+Command: Forfeit|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "Accept"
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.
+
+--------------------------------------------
+--------------      Quit     ---------------
+--------------------------------------------
+(Optional)
+Use: Call this command to exit the session. This is optional and if you do not call the Quit command the server will eventually timeout the client and end the session.
+Parameters: 
+	- {Token} The token returned to you from the Connection command. Each new Connection to the server will get you a new token.
+	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+Command: Quit|{Token}|{Channel}|{Channel Password}<END>
+Responses:
+	- "Accept"
+	- "InvalidRequest|{Reason}"
+		- {Reason} The second parameter holds the reason why the request was invalid.

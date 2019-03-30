@@ -1,0 +1,15 @@
+﻿Create Table MatchHistory
+(
+	Matchup int identity,
+	GridWidth int,
+	GridHeight int,
+	ClientOneVersion varchar(50),
+	ClientOneAlgorithm varchar(50),
+	ClientOneConfig varchar(5000),
+	ClientOneWin numeric(9,0),
+	ClientTwoVersion varchar(50),
+	ClientTwoAlgorithm varchar(50),
+	ClientTwoConfig varchar(5000),
+	ClientTwoWin numeric(9,0),
+	CONSTRAINT Q_MATCHHISTORY_MATCHUP_00001 PRIMARY KEY (Matchup)
+)
