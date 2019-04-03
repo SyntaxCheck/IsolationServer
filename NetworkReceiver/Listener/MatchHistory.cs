@@ -9,15 +9,15 @@ public class MatchHistory
 {
     public int MatchId { get; set; }
     public GameGridSquare[,] MatchGrid { get; set; }
-    public string PlayerOne { get; set; }
-    public string PlayerOneVersion { get; set; }
-    public string PlayerOneAlgorithm { get; set; }
-    public string PlayerOneConfig { get; set; }
-    public string PlayerTwo { get; set; }
-    public string PlayerTwoVersion { get; set; }
-    public string PlayerTwoAlgorithm { get; set; }
-    public string PlayerTwoConfig { get; set; }
-    public string StartingPlayer { get; set; }
+    public string UserOne { get; set; }
+    public string UserOneVersion { get; set; }
+    public string UserOneAlgorithm { get; set; }
+    public string UserOneConfig { get; set; }
+    public string UserTwo { get; set; }
+    public string UserTwoVersion { get; set; }
+    public string UserTwoAlgorithm { get; set; }
+    public string UserTwoConfig { get; set; }
+    public string StartingUser { get; set; }
     public string Winner { get; set; }
     public DateTime MatchStartDate { get; set; }
     public TimeSpan MatchLength { get; set; }
@@ -26,11 +26,11 @@ public class MatchHistory
     public int MatchTotalCommands { get; set; }
     public int MatchTotalMoves { get; set; }
     public bool HasBeenWrittenToDB { get; set; }
-    public bool PlayerOneIsWinner
+    public bool UserOneIsWinner
     {
         get
         {
-            if (PlayerOne == Winner)
+            if (UserOne == Winner)
                 return true;
             else
                 return false;

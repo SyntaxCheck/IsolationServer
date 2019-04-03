@@ -8,14 +8,14 @@ public class MatchHistoryAggregate
 {
     public int GridWidth { get; set; }
     public int GridHeight { get; set; }
-    public int PlayerOneWinCount { get; set; }
-    public int PlayerTwoWinCount { get; set; }
-    public string PlayerOneVersion { get; set; }
-    public string PlayerOneAlgorithm { get; set; }
-    public string PlayerOneConfig { get; set; }
-    public string PlayerTwoVersion { get; set; }
-    public string PlayerTwoAlgorithm { get; set; }
-    public string PlayerTwoConfig { get; set; }
+    public int UserOneWinCount { get; set; }
+    public int UserTwoWinCount { get; set; }
+    public string UserOneVersion { get; set; }
+    public string UserOneAlgorithm { get; set; }
+    public string UserOneConfig { get; set; }
+    public string UserTwoVersion { get; set; }
+    public string UserTwoAlgorithm { get; set; }
+    public string UserTwoConfig { get; set; }
 
     public MatchHistoryAggregate()
     {

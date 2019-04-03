@@ -54,14 +54,14 @@ namespace NetworkReceiver
                     MatchHistoryAggregate match = new MatchHistoryAggregate();
                     match.GridWidth = reader.GetInt32(0);
                     match.GridHeight = reader.GetInt32(1);
-                    match.PlayerOneVersion = reader.GetString(2);
-                    match.PlayerOneAlgorithm = reader.GetString(3);
-                    match.PlayerOneConfig = reader.GetString(4);
-                    match.PlayerOneWinCount = (int)reader.GetInt32(5);
-                    match.PlayerTwoVersion = reader.GetString(6);
-                    match.PlayerTwoAlgorithm = reader.GetString(7);
-                    match.PlayerTwoConfig = reader.GetString(8);
-                    match.PlayerTwoWinCount = (int)reader.GetInt32(9);
+                    match.UserOneVersion = reader.GetString(2);
+                    match.UserOneAlgorithm = reader.GetString(3);
+                    match.UserOneConfig = reader.GetString(4);
+                    match.UserOneWinCount = (int)reader.GetInt32(5);
+                    match.UserTwoVersion = reader.GetString(6);
+                    match.UserTwoAlgorithm = reader.GetString(7);
+                    match.UserTwoConfig = reader.GetString(8);
+                    match.UserTwoWinCount = (int)reader.GetInt32(9);
 
                     Records.Add(match);
                 }
@@ -91,14 +91,14 @@ namespace NetworkReceiver
                     MatchHistoryAggregate match = new MatchHistoryAggregate();
                     match.GridWidth = reader.GetInt32(0);
                     match.GridHeight = reader.GetInt32(1);
-                    match.PlayerOneVersion = reader.GetString(2);
-                    match.PlayerOneAlgorithm = reader.GetString(3);
-                    match.PlayerOneConfig = reader.GetString(4);
-                    match.PlayerOneWinCount = reader.GetInt32(5);
-                    match.PlayerTwoVersion = reader.GetString(6);
-                    match.PlayerTwoAlgorithm = reader.GetString(7);
-                    match.PlayerTwoConfig = reader.GetString(8);
-                    match.PlayerTwoWinCount = reader.GetInt32(9);
+                    match.UserOneVersion = reader.GetString(2);
+                    match.UserOneAlgorithm = reader.GetString(3);
+                    match.UserOneConfig = reader.GetString(4);
+                    match.UserOneWinCount = reader.GetInt32(5);
+                    match.UserTwoVersion = reader.GetString(6);
+                    match.UserTwoAlgorithm = reader.GetString(7);
+                    match.UserTwoConfig = reader.GetString(8);
+                    match.UserTwoWinCount = reader.GetInt32(9);
 
                     Records.Add(match);
                 }
@@ -121,14 +121,14 @@ namespace NetworkReceiver
                 this.dgvMatches.Rows.Clear();
                 for (int i = 0; i < Records.Count(); i++)
                 {
-                    string winPercent = (100 * Math.Round(((double)Records[i].PlayerOneWinCount / (Records[i].PlayerOneWinCount + Records[i].PlayerTwoWinCount)), 2)).ToString() + "%";
+                    string winPercent = (100 * Math.Round(((double)Records[i].UserOneWinCount / (Records[i].UserOneWinCount + Records[i].UserTwoWinCount)), 2)).ToString() + "%";
 
                     if (winPercent.Length == 2)
                     {
                         winPercent = "0" + winPercent;
                     }
 
-                    dgvMatches.Rows.Add(new object[] { ("(" + Records[i].GridWidth.ToString() + "," + Records[i].GridHeight.ToString() + ")"), Records[i].PlayerOneVersion, Records[i].PlayerOneAlgorithm, Records[i].PlayerOneConfig, Records[i].PlayerOneWinCount, Records[i].PlayerTwoVersion, Records[i].PlayerTwoAlgorithm, Records[i].PlayerTwoConfig, Records[i].PlayerTwoWinCount, winPercent });
+                    dgvMatches.Rows.Add(new object[] { ("(" + Records[i].GridWidth.ToString() + "," + Records[i].GridHeight.ToString() + ")"), Records[i].UserOneVersion, Records[i].UserOneAlgorithm, Records[i].UserOneConfig, Records[i].UserOneWinCount, Records[i].UserTwoVersion, Records[i].UserTwoAlgorithm, Records[i].UserTwoConfig, Records[i].UserTwoWinCount, winPercent });
                 }
             }
             else

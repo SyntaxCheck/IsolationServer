@@ -25,7 +25,7 @@ namespace NetworkReceiver
             {
                 for (int i = 0; i < Matches.Count(); i++)
                 {
-                    this.dgvMatches.Rows.Add(new object[] { Matches[i].MatchId.ToString(), Matches[i].MatchStartDate.ToString("yyyyMMdd hh:mm:ss"), Matches[i].StartingPlayer, Matches[i].Winner, Matches[i].MatchTotalMoves.ToString(), PointToString(Matches[i].OpeningMove), PointToString(Matches[i].SecondOpeningMove), TimeSpanFormatter.TimeSpanFormattedFull(Matches[i].MatchLength), Matches[i].PlayerOne, Matches[i].PlayerTwo, Matches[i].MatchTotalCommands.ToString() });
+                    this.dgvMatches.Rows.Add(new object[] { Matches[i].MatchId.ToString(), Matches[i].MatchStartDate.ToString("yyyyMMdd hh:mm:ss"), Matches[i].StartingUser, Matches[i].Winner, Matches[i].MatchTotalMoves.ToString(), PointToString(Matches[i].OpeningMove), PointToString(Matches[i].SecondOpeningMove), TimeSpanFormatter.TimeSpanFormattedFull(Matches[i].MatchLength), Matches[i].UserOne, Matches[i].UserTwo, Matches[i].MatchTotalCommands.ToString() });
                 }
             }
             else

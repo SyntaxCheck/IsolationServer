@@ -62,6 +62,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.lblUptime = new System.Windows.Forms.Label();
             this.btnDbViewer = new System.Windows.Forms.Button();
+            this.lblCommandsPerSecond = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -93,6 +95,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.lblCommandsPerSecond);
             this.groupBox2.Controls.Add(this.lblMoves);
             this.groupBox2.Controls.Add(this.lblCommands);
             this.groupBox2.Controls.Add(this.label6);
@@ -380,6 +384,24 @@
             this.btnDbViewer.UseVisualStyleBackColor = true;
             this.btnDbViewer.Click += new System.EventHandler(this.btnDbViewer_Click);
             // 
+            // lblCommandsPerSecond
+            // 
+            this.lblCommandsPerSecond.AutoSize = true;
+            this.lblCommandsPerSecond.Location = new System.Drawing.Point(189, 72);
+            this.lblCommandsPerSecond.Name = "lblCommandsPerSecond";
+            this.lblCommandsPerSecond.Size = new System.Drawing.Size(27, 13);
+            this.lblCommandsPerSecond.TabIndex = 10;
+            this.lblCommandsPerSecond.Text = "N/A";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(111, 72);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(72, 13);
+            this.label11.TabIndex = 11;
+            this.label11.Text = "Cmd Per Sec:";
+            // 
             // SessionViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -440,6 +462,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button btnWriteNow;
         private System.Windows.Forms.Button btnDbViewer;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblCommandsPerSecond;
     }
 }
 

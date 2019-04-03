@@ -12,13 +12,13 @@ namespace NetworkReceiver
 {
     public partial class MatchReplayer : Form
     {
-        private const string PLAYER_ONE_ICON = "_O_";
-        private const string PLAYER_TWO_ICON = "-T-";
-        private const string PLAYER_ONE_BLOCKED_ICON = "O";
-        private const string PLAYER_TWO_BLOCKED_ICON = "T";
+        private const string USER_ONE_ICON = "_O_";
+        private const string USER_TWO_ICON = "-T-";
+        private const string USER_ONE_BLOCKED_ICON = "O";
+        private const string USER_TWO_BLOCKED_ICON = "T";
         private Color BLOCKED_COLOR = Color.SlateGray;
-        private Color PLAYER_ONE_COLOR = Color.LimeGreen;
-        private Color PLAYER_TWO_COLOR = Color.LightBlue;
+        private Color USER_ONE_COLOR = Color.LimeGreen;
+        private Color USER_TWO_COLOR = Color.LightBlue;
         private List<Point> possibleMoveDirections;
         public GameGridSquare[,] GameGrid;
         public MatchHistory Match;
@@ -31,10 +31,10 @@ namespace NetworkReceiver
             InitializeComponent();
 
             CurrentReplayCtr = 1;
-            btnPlayerOneLegend.Text = PLAYER_ONE_ICON;
-            btnPlayerTwoLegend.Text = PLAYER_TWO_ICON;
-            btnPlayerOneLegend.BackColor = PLAYER_ONE_COLOR;
-            btnPlayerTwoLegend.BackColor = PLAYER_TWO_COLOR;
+            btnPlayerOneLegend.Text = USER_ONE_ICON;
+            btnPlayerTwoLegend.Text = USER_TWO_ICON;
+            btnPlayerOneLegend.BackColor = USER_ONE_COLOR;
+            btnPlayerTwoLegend.BackColor = USER_TWO_COLOR;
 
             possibleMoveDirections = new List<Point>();
             possibleMoveDirections.Add(new Point(2, 1));
@@ -57,11 +57,11 @@ namespace NetworkReceiver
             lblDuration.Text = TimeSpanFormatter.TimeSpanFormattedFull(Match.MatchLength);
             lblCommands.Text = Match.MatchTotalCommands.ToString();
             lblMoves.Text = Match.MatchTotalMoves.ToString();
-            lblPlayerOne.Text = Match.PlayerOne;
-            lblPlayerOneLegend.Text = Match.PlayerOne;
-            lblPlayerTwo.Text = Match.PlayerTwo;
-            lblPlayerTwoLegend.Text = Match.PlayerTwo;
-            lblStartingPlayer.Text = Match.StartingPlayer;
+            lblPlayerOne.Text = Match.UserOne;
+            lblPlayerOneLegend.Text = Match.UserOne;
+            lblPlayerTwo.Text = Match.UserTwo;
+            lblPlayerTwoLegend.Text = Match.UserTwo;
+            lblStartingPlayer.Text = Match.StartingUser;
             lblWinner.Text = Match.Winner;
             GameGrid = Match.MatchGrid;
 
@@ -205,22 +205,22 @@ namespace NetworkReceiver
                 {
                     if (GameGrid[x, y].GridMoveNumber == move)
                     {
-                        string playerIcon = String.Empty;
-                        Color playerColor = Color.White;
-                        if (GameGrid[x, y].GridPlayer == Match.PlayerOne)
+                        string userIcon = String.Empty;
+                        Color userColor = Color.White;
+                        if (GameGrid[x, y].GridUser == Match.UserOne)
                         {
-                            playerIcon = PLAYER_ONE_ICON;
-                            playerColor = PLAYER_ONE_COLOR;
+                            userIcon = USER_ONE_ICON;
+                            userColor = USER_ONE_COLOR;
                         }
-                        else if (GameGrid[x, y].GridPlayer == Match.PlayerTwo)
+                        else if (GameGrid[x, y].GridUser == Match.UserTwo)
                         {
-                            playerIcon = PLAYER_TWO_ICON;
-                            playerColor = PLAYER_TWO_COLOR;
+                            userIcon = USER_TWO_ICON;
+                            userColor = USER_TWO_COLOR;
                         }
 
                         Button btn = this.Controls.Find("Btn_X" + x.ToString() + "_Y" + y.ToString(), true).FirstOrDefault() as Button;
-                        btn.BackColor = playerColor;
-                        btn.Text = playerIcon;
+                        btn.BackColor = userColor;
+                        btn.Text = userIcon;
                     }
                     else if (move > 2 && move <= MatchMaxMove && GameGrid[x, y].GridMoveNumber == (move - 2)) //GridMoveNumber starts at 1 not 0
                     {
@@ -232,17 +232,17 @@ namespace NetworkReceiver
                                 {
                                     string gridBlockedText = String.Empty;
 
-                                    if (GameGrid[x2, y2].GridPlayer == Match.PlayerOne)
+                                    if (GameGrid[x2, y2].GridUser == Match.UserOne)
                                     {
-                                        gridBlockedText = PLAYER_ONE_BLOCKED_ICON;
+                                        gridBlockedText = USER_ONE_BLOCKED_ICON;
                                     }
-                                    else if (GameGrid[x2, y2].GridPlayer == Match.PlayerTwo)
+                                    else if (GameGrid[x2, y2].GridUser == Match.UserTwo)
                                     {
-                                        gridBlockedText = PLAYER_TWO_BLOCKED_ICON;
+                                        gridBlockedText = USER_TWO_BLOCKED_ICON;
                                     }
                                     gridBlockedText += " - " + GameGrid[x2, y2].GridMoveNumber.ToString();
 
-                                    //Two moves ago was this players last move, clear the button
+                                    //Two moves ago was this users last move, clear the button
                                     Button btn = this.Controls.Find("Btn_X" + x.ToString() + "_Y" + y.ToString(), true).FirstOrDefault() as Button;
                                     btn.Text = gridBlockedText;
                                     btn.BackColor = BLOCKED_COLOR;

@@ -148,9 +148,13 @@ public class MatchSession
                     //Connection request: Username, Channel, Password, IsXYFormat       //Connect to opponent. IsXYFormat set to true if the first number is X, set to False if first number means Row
                     //  Response: Accept/Reject, Token, Current Users connected
                     //Example Req  -     Connection|TestUser|Test|abCd123!|T
-                    //Example Resp -     Accept|55673925786456|2
+                    //Example Resp -     Accept|55673925786456|2|YourChannelName|YourPassword
 
-                    if (split.Length == 5)
+                    if (split.Length == 3)
+                    {
+                        rtn = HandleRequestConnection(split[1], split[2]);
+                    }
+                    else if (split.Length == 5)
                     {
                         rtn = HandleRequestConnection(split[1], split[2], split[3], split[4]);
                     }
@@ -415,6 +419,18 @@ public class MatchSession
 
         return rtn;
     }
+    private string HandleRequestConnection(string userName, string isYXFormat)
+    {
+        //Default game board to 7x7 and default channel/pwd
+        if (String.IsNullOrEmpty(Channel))
+        {
+            //If this is the first client to connect this way then generate a random id
+            Channel = Rng.Next(1000000000, 999999999).ToString();
+            ChannelPassword = "DefaulPwd";
+        }
+
+        return HandleRequestConnection(userName, Channel, ChannelPassword, isYXFormat, 7, 7);
+    }
     private string HandleRequestConnection(string userName, string channelIn, string channelPwdIn, string isYXFormat)
     {
         //Default game board is 7x7
@@ -455,7 +471,7 @@ public class MatchSession
                             {
                                 FirstUser = userName;
                                 FirstUserToken = GetRandomToken();
-                                rtn = "Accept|" + FirstUserToken + "|" + GetNumberOfConnected().ToString();
+                                rtn = "Accept|" + FirstUserToken + "|" + GetNumberOfConnected().ToString() + "|" + Channel + "|" + ChannelPassword;
                                 SetXYFormat(FirstUserToken, isYXFormat);
                                 SetUserPing(FirstUserToken);
                             }
@@ -511,8 +527,8 @@ public class MatchSession
 
                     if (GameHasEndedWithWinner)
                     {
-                        //Swap starting players, the function will also set plays turn
-                        SwapStartingPlayers();
+                        //Swap starting users, the function will also set plays turn
+                        SwapStartingUsers();
                     }
                     else
                     {
@@ -527,7 +543,7 @@ public class MatchSession
                         }
                     }
 
-                    //Sets the player turns based on "startingUser"
+                    //Sets the users turns based on "startingUser"
                     SetStartingUser();
                     Reset();
                     GameStarted = true;
@@ -579,7 +595,7 @@ public class MatchSession
         {
             rtn = "WaitingForOpponentToGetReady";
         }
-        else if (IsPlayersTurn(token))
+        else if (IsUsersTurn(token))
         {
             rtn = "YourMove";
         }
@@ -596,7 +612,7 @@ public class MatchSession
     {
         string rtn = String.Empty;
 
-        if (IsPlayersTurn(token))
+        if (IsUsersTurn(token))
         {
             Point point = new Point();
             string validateMessage = StringPointToPoint(token, movePoint, ref point);
@@ -637,7 +653,7 @@ public class MatchSession
         Point? point = GetOpponentLastMove(token);
         if (point.HasValue)
         {
-            if (IsPlayerXYFormat(token))
+            if (IsUserXYFormat(token))
             {
                 rtn = "(" + point.Value.X.ToString() + "," + point.Value.Y.ToString() + ")";
             }
@@ -721,7 +737,7 @@ public class MatchSession
                 ggs.State = GridState.Blank;
                 ggs.X = x;
                 ggs.Y = y;
-                ggs.GridPlayer = String.Empty;
+                ggs.GridUser = String.Empty;
                 ggs.GridMoveNumber = GridMoveNumber;
 
                 Grid[x, y] = ggs;
@@ -754,10 +770,10 @@ public class MatchSession
 
         if (!String.IsNullOrEmpty(userForToken))
         {
-            //Set the last player move to blocked if the player has made their first move
-            if (HasPlayerMadeFirstMove(token))
+            //Set the last User move to blocked if the user has made their first move
+            if (HasUserMadeFirstMove(token))
             {
-                Point? point = GetPlayerLastMove(token);
+                Point? point = GetUserLastMove(token);
 
                 if (point.HasValue)
                 {
@@ -769,10 +785,10 @@ public class MatchSession
                 }
             }
 
-            //Used for debug, if the user requests the final game board at the end we can display which move was made in which order and by which player
+            //Used for debug, if the user requests the final game board at the end we can display which move was made in which order and by which user
             GridMoveNumber++;
             Grid[movePoint.X, movePoint.Y].GridMoveNumber = GridMoveNumber;
-            Grid[movePoint.X, movePoint.Y].GridPlayer = userForToken;
+            Grid[movePoint.X, movePoint.Y].GridUser = userForToken;
             Grid[movePoint.X, movePoint.Y].State = GridState.Occupied;
 
             ServerTotalMoves++;
@@ -782,7 +798,7 @@ public class MatchSession
 
             if (!IsGameOver(token))
             {
-                SetNextPlayerEndTurn(token);
+                SetNextUserEndTurn(token);
             }
             else
             {
@@ -940,15 +956,15 @@ public class MatchSession
         MatchHistory mh = new MatchHistory();
         mh.MatchGrid = Grid;
         mh.MatchId = MatchId;
-        mh.PlayerOne = FirstUser;
-        mh.PlayerOneVersion = FirstUserVersion;
-        mh.PlayerOneAlgorithm = FirstUserAlgorithm;
-        mh.PlayerOneConfig = FirstUserConfig;
-        mh.PlayerTwo = SecondUser;
-        mh.PlayerTwoVersion = SecondUserVersion;
-        mh.PlayerTwoAlgorithm = SecondUserAlgorithm;
-        mh.PlayerTwoConfig = SecondUserConfig;
-        mh.StartingPlayer = StartingUser;
+        mh.UserOne = FirstUser;
+        mh.UserOneVersion = FirstUserVersion;
+        mh.UserOneAlgorithm = FirstUserAlgorithm;
+        mh.UserOneConfig = FirstUserConfig;
+        mh.UserTwo = SecondUser;
+        mh.UserTwoVersion = SecondUserVersion;
+        mh.UserTwoAlgorithm = SecondUserAlgorithm;
+        mh.UserTwoConfig = SecondUserConfig;
+        mh.StartingUser = StartingUser;
         mh.Winner = WinningUser;
         mh.OpeningMove = (Point)OpeningMove;
         mh.SecondOpeningMove = (Point)SecondOpeningMove;
@@ -964,7 +980,7 @@ public class MatchSession
         GameHasEndedWithWinner = true;
         MatchStartDate = DateTime.MinValue;
     }
-    private void SetNextPlayerEndTurn(string token)
+    private void SetNextUserEndTurn(string token)
     {
         if (FirstUserToken == token)
         {
@@ -1019,7 +1035,7 @@ public class MatchSession
 
         return String.Empty;
     }
-    private Point? GetPlayerLastMove(string token)
+    private Point? GetUserLastMove(string token)
     {
         if (token == FirstUserToken)
         {
@@ -1045,7 +1061,7 @@ public class MatchSession
             opponentToken = FirstUserToken;
         }
 
-        return GetPlayerLastMove(opponentToken);
+        return GetUserLastMove(opponentToken);
     }
     private string GetRandomToken()
     {
@@ -1086,7 +1102,7 @@ public class MatchSession
 
         return true;
     }
-    private bool HasPlayerMadeFirstMove(string token)
+    private bool HasUserMadeFirstMove(string token)
     {
         if (FirstUserToken == token && FirstUserSetOpeningMove)
         {
@@ -1112,7 +1128,7 @@ public class MatchSession
 
         return false;
     }
-    private bool IsPlayersTurn(string token)
+    private bool IsUsersTurn(string token)
     {
         if (FirstUserToken == token && FirstUsersTurn)
         {
@@ -1141,7 +1157,7 @@ public class MatchSession
 
         return true;
     }
-    private bool IsPlayerXYFormat(string token)
+    private bool IsUserXYFormat(string token)
     {
         if (FirstUserToken == token && FirstUserIsXYFormat)
         {
@@ -1169,7 +1185,7 @@ public class MatchSession
         }
         else if (Point.Equals(movePoint, FirstUserLastMove) || Point.Equals(movePoint, SecondUserLastMove))
         {
-            validateMessage = "Move point already occupied by player";
+            validateMessage = "Move point already occupied by user";
             return false;
         }
         else if (Grid[movePoint.X, movePoint.Y].State == GridState.Blocked || Grid[movePoint.X, movePoint.Y].State == GridState.Occupied)
@@ -1188,13 +1204,13 @@ public class MatchSession
         {
             return false;
         }
-        else if (!HasPlayerMadeFirstMove(token))
+        else if (!HasUserMadeFirstMove(token))
         {
             return true;
         }
         else
         {
-            Point? oldPosition = GetPlayerLastMove(token);
+            Point? oldPosition = GetUserLastMove(token);
 
             if (oldPosition.HasValue)
             {
@@ -1258,7 +1274,7 @@ public class MatchSession
 
         return false;
     }
-    private void SwapStartingPlayers()
+    private void SwapStartingUsers()
     {
         if (StartingUser == FirstUser)
         {
@@ -1308,7 +1324,7 @@ public class MatchSession
                 }
                 if (firstNumber >= 0 && secondNumber >= 0)
                 {
-                    if (IsPlayerXYFormat(token))
+                    if (IsUserXYFormat(token))
                     {
                         point = new Point(firstNumber, secondNumber);
                     }
@@ -1332,10 +1348,10 @@ public class MatchSession
                 rtn = "-";
                 break;
             case GridState.Blocked:
-                rtn = "x - " + ggs.GridPlayer + "(" + ggs.GridMoveNumber.ToString() + ")";
+                rtn = "x - " + ggs.GridUser + "(" + ggs.GridMoveNumber.ToString() + ")";
                 break;
             case GridState.Occupied:
-                rtn = ggs.GridPlayer + "(" + ggs.GridMoveNumber.ToString() + ")";
+                rtn = ggs.GridUser + "(" + ggs.GridMoveNumber.ToString() + ")";
                 break;
             default:
                 rtn = "HowDidWeGetAnInvalidGridStateHere?";

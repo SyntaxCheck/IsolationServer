@@ -38,6 +38,8 @@ namespace NetworkReceiver
         private bool WriteStatsToDB = true;
         List<MatchHistoryAggregate> AggragateStats;
         private DateTime StatsLastWritten;
+        private List<long> LastCommandsPerSecond;
+        private long LastCps; 
 
         public SessionViewer()
         {
@@ -57,6 +59,8 @@ namespace NetworkReceiver
 
             StartService();
             AggragateStats = new List<MatchHistoryAggregate>();
+            LastCommandsPerSecond = new List<long>();
+            LastCps = 0;
             lblLastDbWrite.Text = "Never";
         }
         private void SessionViewer_FormClosing(object sender, FormClosingEventArgs e)
@@ -119,40 +123,40 @@ namespace NetworkReceiver
                                         AggragateStats[j].GridWidth == MatchListener.Sessions[i].CompletedMatches[k].MatchGrid.GetLength(1) &&
                                         AggragateStats[j].GridHeight == MatchListener.Sessions[i].CompletedMatches[k].MatchGrid.GetLength(0)))
                                     {
-                                        if (AggragateStats[j].PlayerOneVersion == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneVersion &&
-                                            AggragateStats[j].PlayerOneAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneAlgorithm &&
-                                            AggragateStats[j].PlayerOneConfig == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneConfig &&
-                                            AggragateStats[j].PlayerTwoVersion == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoVersion &&
-                                            AggragateStats[j].PlayerTwoAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoAlgorithm &&
-                                            AggragateStats[j].PlayerTwoConfig == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoConfig)
+                                        if (AggragateStats[j].UserOneVersion == MatchListener.Sessions[i].CompletedMatches[k].UserOneVersion &&
+                                            AggragateStats[j].UserOneAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].UserOneAlgorithm &&
+                                            AggragateStats[j].UserOneConfig == MatchListener.Sessions[i].CompletedMatches[k].UserOneConfig &&
+                                            AggragateStats[j].UserTwoVersion == MatchListener.Sessions[i].CompletedMatches[k].UserTwoVersion &&
+                                            AggragateStats[j].UserTwoAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].UserTwoAlgorithm &&
+                                            AggragateStats[j].UserTwoConfig == MatchListener.Sessions[i].CompletedMatches[k].UserTwoConfig)
                                         {
-                                            if (MatchListener.Sessions[i].CompletedMatches[k].PlayerOneIsWinner)
+                                            if (MatchListener.Sessions[i].CompletedMatches[k].UserOneIsWinner)
                                             {
-                                                AggragateStats[j].PlayerOneWinCount++;
+                                                AggragateStats[j].UserOneWinCount++;
                                             }
                                             else
                                             {
-                                                AggragateStats[j].PlayerTwoWinCount++;
+                                                AggragateStats[j].UserTwoWinCount++;
                                             }
 
                                             foundInAgg = true;
 
                                             break;
                                         }
-                                        else if (AggragateStats[j].PlayerOneVersion == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoVersion &&
-                                            AggragateStats[j].PlayerOneAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoAlgorithm &&
-                                            AggragateStats[j].PlayerOneConfig == MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoConfig &&
-                                            AggragateStats[j].PlayerTwoVersion == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneVersion &&
-                                            AggragateStats[j].PlayerTwoAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneAlgorithm &&
-                                            AggragateStats[j].PlayerTwoConfig == MatchListener.Sessions[i].CompletedMatches[k].PlayerOneConfig)
+                                        else if (AggragateStats[j].UserOneVersion == MatchListener.Sessions[i].CompletedMatches[k].UserTwoVersion &&
+                                            AggragateStats[j].UserOneAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].UserTwoAlgorithm &&
+                                            AggragateStats[j].UserOneConfig == MatchListener.Sessions[i].CompletedMatches[k].UserTwoConfig &&
+                                            AggragateStats[j].UserTwoVersion == MatchListener.Sessions[i].CompletedMatches[k].UserOneVersion &&
+                                            AggragateStats[j].UserTwoAlgorithm == MatchListener.Sessions[i].CompletedMatches[k].UserOneAlgorithm &&
+                                            AggragateStats[j].UserTwoConfig == MatchListener.Sessions[i].CompletedMatches[k].UserOneConfig)
                                         {
-                                            if (!MatchListener.Sessions[i].CompletedMatches[k].PlayerOneIsWinner) //Flip it since we matched on opposite players
+                                            if (!MatchListener.Sessions[i].CompletedMatches[k].UserOneIsWinner) //Flip it since we matched on opposite users
                                             {
-                                                AggragateStats[j].PlayerOneWinCount++;
+                                                AggragateStats[j].UserOneWinCount++;
                                             }
                                             else
                                             {
-                                                AggragateStats[j].PlayerTwoWinCount++;
+                                                AggragateStats[j].UserTwoWinCount++;
                                             }
 
                                             foundInAgg = true;
@@ -167,14 +171,14 @@ namespace NetworkReceiver
                                     MatchHistoryAggregate mha = new MatchHistoryAggregate();
                                     mha.GridWidth = MatchListener.Sessions[i].CompletedMatches[k].MatchGrid.GetLength(0);
                                     mha.GridHeight = MatchListener.Sessions[i].CompletedMatches[k].MatchGrid.GetLength(1);
-                                    mha.PlayerOneWinCount = MatchListener.Sessions[i].CompletedMatches[k].PlayerOneIsWinner ? 1 : 0;
-                                    mha.PlayerOneVersion = MatchListener.Sessions[i].CompletedMatches[k].PlayerOneVersion;
-                                    mha.PlayerOneAlgorithm = MatchListener.Sessions[i].CompletedMatches[k].PlayerOneAlgorithm;
-                                    mha.PlayerOneConfig = MatchListener.Sessions[i].CompletedMatches[k].PlayerOneConfig;
-                                    mha.PlayerTwoWinCount = !MatchListener.Sessions[i].CompletedMatches[k].PlayerOneIsWinner ? 1 : 0;
-                                    mha.PlayerTwoVersion = MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoVersion;
-                                    mha.PlayerTwoAlgorithm = MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoAlgorithm;
-                                    mha.PlayerTwoConfig = MatchListener.Sessions[i].CompletedMatches[k].PlayerTwoConfig;
+                                    mha.UserOneWinCount = MatchListener.Sessions[i].CompletedMatches[k].UserOneIsWinner ? 1 : 0;
+                                    mha.UserOneVersion = MatchListener.Sessions[i].CompletedMatches[k].UserOneVersion;
+                                    mha.UserOneAlgorithm = MatchListener.Sessions[i].CompletedMatches[k].UserOneAlgorithm;
+                                    mha.UserOneConfig = MatchListener.Sessions[i].CompletedMatches[k].UserOneConfig;
+                                    mha.UserTwoWinCount = !MatchListener.Sessions[i].CompletedMatches[k].UserOneIsWinner ? 1 : 0;
+                                    mha.UserTwoVersion = MatchListener.Sessions[i].CompletedMatches[k].UserTwoVersion;
+                                    mha.UserTwoAlgorithm = MatchListener.Sessions[i].CompletedMatches[k].UserTwoAlgorithm;
+                                    mha.UserTwoConfig = MatchListener.Sessions[i].CompletedMatches[k].UserTwoConfig;
 
                                     AggragateStats.Add(mha);
                                 }
@@ -197,6 +201,22 @@ namespace NetworkReceiver
                     }
                 }
 
+                //Calculate Commands per second
+                long calculatedCps = totalCommands - LastCps;
+                long cps = 0;
+
+                if (calculatedCps > 0) //If we clear out sessions dont count those stats
+                {
+                    LastCommandsPerSecond.Add(calculatedCps);
+
+                    while (LastCommandsPerSecond.Count() > 100)
+                    {
+                        LastCommandsPerSecond.RemoveAt(0);
+                    }
+                }
+                LastCps = totalCommands;
+                cps = (long)Math.Round(LastCommandsPerSecond.Average(),0);
+
                 int scrollPos = GetScroll(tbxOutput, ScrollBars.Horizontal);
 
                 tbxOutput.Text = displayText;
@@ -205,6 +225,7 @@ namespace NetworkReceiver
                 lblTotalSessions.Text = LargeNumberToReadableText(totalSessions).ToString();
                 lblCommands.Text = LargeNumberToReadableText(totalCommands).ToString();
                 lblMoves.Text = LargeNumberToReadableText(totalMoves).ToString();
+                lblCommandsPerSecond.Text = LargeNumberToReadableText(cps).ToString();
 
                 SetServerUptime();
                 ScrollTo(scrollPos, tbxOutput);

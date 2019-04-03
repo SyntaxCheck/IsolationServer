@@ -108,7 +108,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(384, 94);
+            this.label22.Location = new System.Drawing.Point(388, 94);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(44, 13);
             this.label22.TabIndex = 20;
@@ -126,11 +126,11 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(354, 70);
+            this.label20.Location = new System.Drawing.Point(361, 70);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(78, 13);
+            this.label20.Size = new System.Drawing.Size(71, 13);
             this.label20.TabIndex = 18;
-            this.label20.Text = "Starting Player:";
+            this.label20.Text = "Starting User:";
             // 
             // lblPlayerTwo
             // 
@@ -144,11 +144,11 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(384, 47);
+            this.label18.Location = new System.Drawing.Point(391, 47);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(48, 13);
+            this.label18.Size = new System.Drawing.Size(41, 13);
             this.label18.TabIndex = 16;
-            this.label18.Text = "Player 2:";
+            this.label18.Text = "User 2:";
             // 
             // lblPlayerOne
             // 
@@ -162,11 +162,11 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(384, 25);
+            this.label16.Location = new System.Drawing.Point(391, 25);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(48, 13);
+            this.label16.Size = new System.Drawing.Size(41, 13);
             this.label16.TabIndex = 14;
-            this.label16.Text = "Player 1:";
+            this.label16.Text = "User 1:";
             // 
             // lblSecondMove
             // 

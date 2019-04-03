@@ -105,20 +105,20 @@ public class MatchListenerThread
                                 {
                                     if ((DateTime.Now - (DateTime)Sessions[i].FirstUserLastPing).TotalSeconds > MatchSession.CLIENT_TIMEOUT_SECONDS)
                                     {
-                                        Sessions[i].DoppedConnectionStatusMsg = "Player Connection dropped, restart with new connection";
+                                        Sessions[i].DoppedConnectionStatusMsg = "User Connection dropped, restart with new connection";
                                         Sessions[i].SessionExpired = true;
                                         Sessions[i].SessionEndDate = DateTime.Now;
-                                        Logger.Write(logInfo, "Session(" + Sessions[i].SessionId.ToString() + ") Dropped player due to lack of response within timeout period. Player name: " + Sessions[i].FirstUser);
+                                        Logger.Write(logInfo, "Session(" + Sessions[i].SessionId.ToString() + ") Dropped user due to lack of response within timeout period. User name: " + Sessions[i].FirstUser);
                                     }
                                 }
                                 if (!String.IsNullOrEmpty(Sessions[i].SecondUser) && Sessions[i].SecondUserLastPing != null)
                                 {
                                     if ((DateTime.Now - (DateTime)Sessions[i].SecondUserLastPing).TotalSeconds > MatchSession.CLIENT_TIMEOUT_SECONDS)
                                     {
-                                        Sessions[i].DoppedConnectionStatusMsg = "Player Connection dropped, restart with new connection";
+                                        Sessions[i].DoppedConnectionStatusMsg = "User Connection dropped, restart with new connection";
                                         Sessions[i].SessionExpired = true;
                                         Sessions[i].SessionEndDate = DateTime.Now;
-                                        Logger.Write(logInfo, "Session(" + Sessions[i].SessionId.ToString() + ") Dropped player due to lack of response within timeout period. Player name: " + Sessions[i].SecondUser);
+                                        Logger.Write(logInfo, "Session(" + Sessions[i].SessionId.ToString() + ") Dropped user due to lack of response within timeout period. User name: " + Sessions[i].SecondUser);
                                     }
                                 }
                             }

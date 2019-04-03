@@ -82,12 +82,12 @@ public class DatabaseWriterThread
                                 SqlCommand cmd = new SqlCommand("Select Coalesce(Max(Matchup),-1) From MatchHistory Where GridWidth = @GridWidth And GridHeight = @GridHeight And ClientOneVersion = @ClientOneVersion And ClientOneAlgorithm = @ClientOneAlgorithm And ClientOneConfig = @ClientOneConfig And ClientTwoVersion = @ClientTwoVersion And ClientTwoAlgorithm = @ClientTwoAlgorithm And ClientTwoConfig = @ClientTwoConfig", con);
                                 cmd.Parameters.AddWithValue("@GridWidth", MatchesToWrite[i].GridWidth);
                                 cmd.Parameters.AddWithValue("@GridHeight", MatchesToWrite[i].GridHeight);
-                                cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].PlayerOneVersion);
-                                cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].PlayerOneAlgorithm);
-                                cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].PlayerOneConfig);
-                                cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].PlayerTwoVersion);
-                                cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].PlayerTwoAlgorithm);
-                                cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].PlayerTwoConfig);
+                                cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].UserOneVersion);
+                                cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].UserOneAlgorithm);
+                                cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].UserOneConfig);
+                                cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].UserTwoVersion);
+                                cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].UserTwoAlgorithm);
+                                cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].UserTwoConfig);
 
                                 int foundKey = -1;
                                 bool correctParms = false;
@@ -120,12 +120,12 @@ public class DatabaseWriterThread
                                     cmd = new SqlCommand("Select Coalesce(Max(Matchup),-1) From MatchHistory Where GridWidth = @GridWidth And GridHeight = @GridHeight And ClientOneVersion = @ClientOneVersion And ClientOneAlgorithm = @ClientOneAlgorithm And ClientOneConfig = @ClientOneConfig And ClientTwoVersion = @ClientTwoVersion And ClientTwoAlgorithm = @ClientTwoAlgorithm And ClientTwoConfig = @ClientTwoConfig", con);
                                     cmd.Parameters.AddWithValue("@GridWidth", MatchesToWrite[i].GridWidth);
                                     cmd.Parameters.AddWithValue("@GridHeight", MatchesToWrite[i].GridHeight);
-                                    cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].PlayerTwoVersion);
-                                    cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].PlayerTwoAlgorithm);
-                                    cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].PlayerTwoConfig);
-                                    cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].PlayerOneVersion);
-                                    cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].PlayerOneAlgorithm);
-                                    cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].PlayerOneConfig);
+                                    cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].UserTwoVersion);
+                                    cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].UserTwoAlgorithm);
+                                    cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].UserTwoConfig);
+                                    cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].UserOneVersion);
+                                    cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].UserOneAlgorithm);
+                                    cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].UserOneConfig);
 
                                     reader = cmd.ExecuteReader();
 
@@ -152,14 +152,14 @@ public class DatabaseWriterThread
                                 {
                                     cmd = new SqlCommand("Update MatchHistory Set ClientOneWin = (Select Coalesce(ClientOneWin, 0) + @ClientOneWin From MatchHistory Where Matchup = @Matchup1), ClientTwoWin = (Select Coalesce(ClientTwoWin, 0) + @ClientTwoWin From MatchHistory Where Matchup = @Matchup2) Where Matchup = @Matchup3", con);
                                     if (correctParms)
-                                        cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].PlayerOneWinCount);
+                                        cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].UserOneWinCount);
                                     else
-                                        cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].PlayerTwoWinCount);
+                                        cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].UserTwoWinCount);
                                     cmd.Parameters.AddWithValue("@Matchup1", foundKey);
                                     if (correctParms)
-                                        cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].PlayerTwoWinCount);
+                                        cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].UserTwoWinCount);
                                     else
-                                        cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].PlayerOneWinCount);
+                                        cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].UserOneWinCount);
                                     cmd.Parameters.AddWithValue("@Matchup2", foundKey);
                                     cmd.Parameters.AddWithValue("@Matchup3", foundKey);
 
@@ -177,14 +177,14 @@ public class DatabaseWriterThread
                                     cmd = new SqlCommand("Insert Into MatchHistory (GridWidth, GridHeight, ClientOneVersion, ClientOneAlgorithm, ClientOneConfig, ClientOneWin, ClientTwoVersion, ClientTwoAlgorithm, ClientTwoConfig, ClientTwoWin) Values (@GridWidth, @GridHeight, @ClientOneVersion, @ClientOneAlgorithm, @ClientOneConfig, @ClientOneWin, @ClientTwoVersion, @ClientTwoAlgorithm, @ClientTwoConfig, @ClientTwoWin)", con);
                                     cmd.Parameters.AddWithValue("@GridWidth", MatchesToWrite[i].GridWidth);
                                     cmd.Parameters.AddWithValue("@GridHeight", MatchesToWrite[i].GridHeight);
-                                    cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].PlayerOneVersion);
-                                    cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].PlayerOneAlgorithm);
-                                    cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].PlayerOneConfig);
-                                    cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].PlayerOneWinCount);
-                                    cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].PlayerTwoVersion);
-                                    cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].PlayerTwoAlgorithm);
-                                    cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].PlayerTwoConfig);
-                                    cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].PlayerTwoWinCount);
+                                    cmd.Parameters.AddWithValue("@ClientOneVersion", MatchesToWrite[i].UserOneVersion);
+                                    cmd.Parameters.AddWithValue("@ClientOneAlgorithm", MatchesToWrite[i].UserOneAlgorithm);
+                                    cmd.Parameters.AddWithValue("@ClientOneConfig", MatchesToWrite[i].UserOneConfig);
+                                    cmd.Parameters.AddWithValue("@ClientOneWin", MatchesToWrite[i].UserOneWinCount);
+                                    cmd.Parameters.AddWithValue("@ClientTwoVersion", MatchesToWrite[i].UserTwoVersion);
+                                    cmd.Parameters.AddWithValue("@ClientTwoAlgorithm", MatchesToWrite[i].UserTwoAlgorithm);
+                                    cmd.Parameters.AddWithValue("@ClientTwoConfig", MatchesToWrite[i].UserTwoConfig);
+                                    cmd.Parameters.AddWithValue("@ClientTwoWin", MatchesToWrite[i].UserTwoWinCount);
 
                                     int rowsAffected = cmd.ExecuteNonQuery();
 

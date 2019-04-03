@@ -10,7 +10,7 @@ public class GameGridSquare
     public int X;
     public int Y;
     public GridState State;
-    public string GridPlayer;
+    public string GridUser;
     public int GridMoveNumber;
 
     public GameGridSquare()
