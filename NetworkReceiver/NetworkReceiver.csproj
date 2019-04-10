@@ -53,7 +53,9 @@
   <ItemGroup>
     <Compile Include="Listener\AiStartingPosition.cs" />
     <Compile Include="Listener\DatabaseWriterThread.cs" />
+    <Compile Include="Listener\IMatchSession.cs" />
     <Compile Include="Listener\MatchHistoryAggregate.cs" />
+    <Compile Include="Listener\MatchSessionBase.cs" />
     <Compile Include="TimeSpanFormatter.cs" />
     <Compile Include="Listener\MatchHistory.cs" />
     <Compile Include="UI\DatabaseViewer.cs">

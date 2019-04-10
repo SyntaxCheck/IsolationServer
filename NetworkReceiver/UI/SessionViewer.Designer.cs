@@ -34,6 +34,8 @@
             this.timerSessionViewer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lblCommandsPerSecond = new System.Windows.Forms.Label();
             this.lblMoves = new System.Windows.Forms.Label();
             this.lblCommands = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -62,8 +64,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.lblUptime = new System.Windows.Forms.Label();
             this.btnDbViewer = new System.Windows.Forms.Button();
-            this.lblCommandsPerSecond = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
+            this.cbxDisableDbWrite = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -75,7 +76,7 @@
             this.tbxOutput.Multiline = true;
             this.tbxOutput.Name = "tbxOutput";
             this.tbxOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxOutput.Size = new System.Drawing.Size(299, 401);
+            this.tbxOutput.Size = new System.Drawing.Size(326, 401);
             this.tbxOutput.TabIndex = 0;
             // 
             // timerSessionViewer
@@ -88,7 +89,7 @@
             this.groupBox1.Controls.Add(this.tbxOutput);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(311, 426);
+            this.groupBox1.Size = new System.Drawing.Size(338, 426);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Session Log Viewer";
@@ -107,12 +108,30 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Location = new System.Drawing.Point(332, 12);
+            this.groupBox2.Location = new System.Drawing.Point(356, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(251, 100);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Total Statistics";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(111, 72);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(72, 13);
+            this.label11.TabIndex = 11;
+            this.label11.Text = "Cmd Per Sec:";
+            // 
+            // lblCommandsPerSecond
+            // 
+            this.lblCommandsPerSecond.AutoSize = true;
+            this.lblCommandsPerSecond.Location = new System.Drawing.Point(189, 72);
+            this.lblCommandsPerSecond.Name = "lblCommandsPerSecond";
+            this.lblCommandsPerSecond.Size = new System.Drawing.Size(27, 13);
+            this.lblCommandsPerSecond.TabIndex = 10;
+            this.lblCommandsPerSecond.Text = "N/A";
             // 
             // lblMoves
             // 
@@ -206,7 +225,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.cbxDisableDbWrite);
             this.groupBox3.Controls.Add(this.btnWriteNow);
+            this.groupBox3.Controls.Add(this.btnDbViewer);
             this.groupBox3.Controls.Add(this.lblLastDbWrite);
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.btnGetSessionMatches);
@@ -221,16 +242,16 @@
             this.groupBox3.Controls.Add(this.tbxKillSession);
             this.groupBox3.Controls.Add(this.label8);
             this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Location = new System.Drawing.Point(332, 118);
+            this.groupBox3.Location = new System.Drawing.Point(356, 118);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(251, 200);
+            this.groupBox3.Size = new System.Drawing.Size(251, 229);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Server Controls";
             // 
             // btnWriteNow
             // 
-            this.btnWriteNow.Location = new System.Drawing.Point(169, 166);
+            this.btnWriteNow.Location = new System.Drawing.Point(169, 197);
             this.btnWriteNow.Name = "btnWriteNow";
             this.btnWriteNow.Size = new System.Drawing.Size(75, 22);
             this.btnWriteNow.TabIndex = 14;
@@ -285,7 +306,7 @@
             // btnStart
             // 
             this.btnStart.Enabled = false;
-            this.btnStart.Location = new System.Drawing.Point(88, 166);
+            this.btnStart.Location = new System.Drawing.Point(88, 197);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 22);
             this.btnStart.TabIndex = 8;
@@ -295,7 +316,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(7, 166);
+            this.btnStop.Location = new System.Drawing.Point(7, 197);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 22);
             this.btnStop.TabIndex = 7;
@@ -368,7 +389,7 @@
             // lblUptime
             // 
             this.lblUptime.AutoSize = true;
-            this.lblUptime.Location = new System.Drawing.Point(329, 428);
+            this.lblUptime.Location = new System.Drawing.Point(360, 425);
             this.lblUptime.Name = "lblUptime";
             this.lblUptime.Size = new System.Drawing.Size(77, 13);
             this.lblUptime.TabIndex = 4;
@@ -376,7 +397,7 @@
             // 
             // btnDbViewer
             // 
-            this.btnDbViewer.Location = new System.Drawing.Point(508, 335);
+            this.btnDbViewer.Location = new System.Drawing.Point(167, 163);
             this.btnDbViewer.Name = "btnDbViewer";
             this.btnDbViewer.Size = new System.Drawing.Size(75, 23);
             this.btnDbViewer.TabIndex = 5;
@@ -384,30 +405,22 @@
             this.btnDbViewer.UseVisualStyleBackColor = true;
             this.btnDbViewer.Click += new System.EventHandler(this.btnDbViewer_Click);
             // 
-            // lblCommandsPerSecond
+            // cbxDisableDbWrite
             // 
-            this.lblCommandsPerSecond.AutoSize = true;
-            this.lblCommandsPerSecond.Location = new System.Drawing.Point(189, 72);
-            this.lblCommandsPerSecond.Name = "lblCommandsPerSecond";
-            this.lblCommandsPerSecond.Size = new System.Drawing.Size(27, 13);
-            this.lblCommandsPerSecond.TabIndex = 10;
-            this.lblCommandsPerSecond.Text = "N/A";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(111, 72);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(72, 13);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "Cmd Per Sec:";
+            this.cbxDisableDbWrite.AutoSize = true;
+            this.cbxDisableDbWrite.Location = new System.Drawing.Point(41, 167);
+            this.cbxDisableDbWrite.Name = "cbxDisableDbWrite";
+            this.cbxDisableDbWrite.Size = new System.Drawing.Size(107, 17);
+            this.cbxDisableDbWrite.TabIndex = 6;
+            this.cbxDisableDbWrite.Text = "Disable DB Write";
+            this.cbxDisableDbWrite.UseVisualStyleBackColor = true;
+            this.cbxDisableDbWrite.CheckedChanged += new System.EventHandler(this.cbxDisableDbWrite_CheckedChanged);
             // 
             // SessionViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(595, 446);
-            this.Controls.Add(this.btnDbViewer);
+            this.ClientSize = new System.Drawing.Size(620, 446);
             this.Controls.Add(this.lblUptime);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -464,6 +477,7 @@
         private System.Windows.Forms.Button btnDbViewer;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblCommandsPerSecond;
+        private System.Windows.Forms.CheckBox cbxDisableDbWrite;
     }
 }
 

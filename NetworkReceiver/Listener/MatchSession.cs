@@ -5,23 +5,18 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-public class MatchSession
+public class MatchSession : MatchSessionBase
 {
     public const bool DEBUG = false;
     public const int CLIENT_TIMEOUT_SECONDS = 300; //How long before the server assumes you have disconnected
     public const int MATCH_HISTORY_COUNT_TO_KEEP = 1000;
     private LogInfo logInfo;
-    public bool SessionExpired { get; set; }
+
     public int GridWidth { get; set; }
     public int GridHeight { get; set; }
-    public int SessionId { get; set; }
     public int MatchId { get; set; }
-    public int ServerTotalCommands { get; set; }
-    public int MatchTotalCommands { get; set; }
     public int ServerTotalMoves { get; set; }
     public int MatchTotalMoves { get; set; }
-    public DateTime SessionStartDate { get; set; }
-    public DateTime? SessionEndDate { get; set; }
     public DateTime MatchStartDate { get; set; }
     public GameGridSquare[,] Grid { get; set; }
     public int GridMoveNumber { get; set; }
@@ -110,6 +105,8 @@ public class MatchSession
         ChannelPassword = String.Empty;
         StartingUser = String.Empty;
         SessionEndDate = null;
+        IsAutoJoinMatch = false;
+        IsMatchFull = false;
 
         PossibleMoveDirections = new List<Point>();
         PossibleMoveDirections.Add(new Point(2, 1));
@@ -126,7 +123,7 @@ public class MatchSession
         SecondUserGotEndOfGameResponse = true;
     }
 
-    public string HandleRequest(string data)
+    public override string HandleRequest(string data)
     {
         string rtn = String.Empty;
         bool unhandledCommand = false;
@@ -425,8 +422,9 @@ public class MatchSession
         if (String.IsNullOrEmpty(Channel))
         {
             //If this is the first client to connect this way then generate a random id
-            Channel = Rng.Next(1000000000, 999999999).ToString();
+            Channel = Rng.Next(100000000, 999999999).ToString();
             ChannelPassword = "DefaulPwd";
+            IsAutoJoinMatch = true;
         }
 
         return HandleRequestConnection(userName, Channel, ChannelPassword, isYXFormat, 7, 7);
@@ -479,9 +477,14 @@ public class MatchSession
                             {
                                 SecondUser = userName;
                                 SecondUserToken = GetRandomToken();
-                                rtn = "Accept|" + SecondUserToken + "|" + GetNumberOfConnected().ToString();
+                                rtn = "Accept|" + SecondUserToken + "|" + GetNumberOfConnected().ToString() + "|" + Channel + "|" + ChannelPassword;
                                 SetXYFormat(SecondUserToken, isYXFormat);
                                 SetUserPing(SecondUserToken);
+                            }
+
+                            if (GetNumberOfConnected() == 2)
+                            {
+                                IsMatchFull = true;
                             }
                         }
                     }
@@ -1075,7 +1078,7 @@ public class MatchSession
 
         return token;
     }
-    public int GetNumberOfConnected()
+    public override int GetNumberOfConnected()
     {
         int count = 0;
 
@@ -1360,7 +1363,7 @@ public class MatchSession
 
         return rtn;
     }
-    public bool ValidateToken(string token)
+    private bool ValidateToken(string token)
     {
         if (FirstUserToken.Trim() == token.Trim())
         {

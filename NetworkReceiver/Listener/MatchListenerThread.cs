@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 public class MatchListenerThread
 {
+    private const int MAX_LOOPS_WITHOUT_CLEANUP = 10000;
     private LogInfo logInfo;
     public int Port { get; set; }
     public string ServerError { get; set; }
@@ -19,6 +20,7 @@ public class MatchListenerThread
     public bool Stop { get; set; }
     public bool HasStopped { get; set; }
     public List<MatchSession> Sessions { get; set; }
+    public int LoopsWithoutCleanup { get; set; }
 
     public MatchListenerThread()
     {
@@ -27,6 +29,7 @@ public class MatchListenerThread
 
         Stop = false;
         HasStopped = false;
+        LoopsWithoutCleanup = 0;
 
         ServerError = String.Empty;
         logInfo = new LogInfo();
@@ -60,8 +63,10 @@ public class MatchListenerThread
             {
                 try
                 {
-                    if (Server.Pending())
+                    //If there is a pending message to the server or we have gone to long without checking for inactive sessions
+                    if (Server.Pending() && LoopsWithoutCleanup < MAX_LOOPS_WITHOUT_CLEANUP)
                     {
+                        LoopsWithoutCleanup++;
                         TcpClient client = Server.AcceptTcpClient();
                         data = null;
                         NetworkStream stream = client.GetStream();
@@ -92,10 +97,15 @@ public class MatchListenerThread
 
                         // Shutdown and end connection
                         client.Close();
+                        stream.Close();
                         client.Dispose();
+                        stream.Dispose();
                     }
                     else
                     {
+                        bool needSleep = (LoopsWithoutCleanup < MAX_LOOPS_WITHOUT_CLEANUP);
+                        LoopsWithoutCleanup = 0;
+
                         for (int i = 0; i < Sessions.Count(); i++)
                         {
                             if (!Sessions[i].SessionExpired)
@@ -124,7 +134,8 @@ public class MatchListenerThread
                             }
                         }
 
-                        Thread.Sleep(10);
+                        if(needSleep) //If we got into this function by a force then we do not need to sleep the thread
+                            Thread.Sleep(10);
                     }
                 }
                 catch (Exception ex)
@@ -160,33 +171,57 @@ public class MatchListenerThread
                     split[i] = split[i].Trim();
                 }
 
-                if (split.Length >= 4)
+                if (split.Length > 0)
                 {
                     string command = split[0];
-                    string channel = split[2];
-                    string channelPwd = split[3];
-
+                    string channel = String.Empty;
+                    string channelPwd = String.Empty;
                     bool messageForwarded = false;
-                    for (int i = 0; i < Sessions.Count(); i++)
+                    bool hasChannelInfo = false;
+
+                    if (split.Length >= 4)
                     {
-                        string validateMessage = String.Empty;
-                        if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
-                        {
-                            messageForwarded = true;
-                            rtn = Sessions[i].HandleRequest(data);
-                            break;
-                        }
-                        else if (!String.IsNullOrEmpty(validateMessage))
-                        {
-                            rtn = validateMessage;
-                            break;
-                        }
+                        channel = split[2];
+                        channelPwd = split[3];
+                        hasChannelInfo = true;
                     }
 
-                    //Check to see if we need to open a new session
-                    if (!messageForwarded && String.IsNullOrEmpty(rtn))
+                    if (command.Trim().ToUpper() == "CONNECTION")
                     {
-                        if (command.Trim().ToUpper() == "CONNECTION")
+                        if (!hasChannelInfo) //Handle Auto join
+                        {
+                            for (int i = 0; i < Sessions.Count(); i++)
+                            {
+                                if (!Sessions[i].IsMatchFull && Sessions[i].IsAutoJoinMatch)
+                                {
+                                    messageForwarded = true;
+                                    rtn = Sessions[i].HandleRequest(data);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < Sessions.Count(); i++)
+                            {
+                                string validateMessage = String.Empty;
+                                if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
+                                {
+                                    messageForwarded = true;
+                                    rtn = Sessions[i].HandleRequest(data);
+                                    break;
+                                }
+                                else if (!String.IsNullOrEmpty(validateMessage))
+                                {
+                                    messageForwarded = true;
+                                    rtn = validateMessage;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //No match exists if the message has not been forwarded, create new one
+                        if (!messageForwarded)
                         {
                             int newSessionId = 1;
                             if (Sessions.Count() > 0)
@@ -198,12 +233,26 @@ public class MatchListenerThread
                             rtn = newSession.HandleRequest(data);
                             Sessions.Add(newSession);
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Sessions.Count(); i++)
                         {
-                            //There is no existing session and the client is not doing a "Connection" command, return error
-                            rtn = "InvalidRequest|No valid game session";
+                            string validateMessage = String.Empty;
+                            if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
+                            {
+                                messageForwarded = true;
+                                rtn = Sessions[i].HandleRequest(data);
+                                break;
+                            }
+                            else if (!String.IsNullOrEmpty(validateMessage))
+                            {
+                                rtn = validateMessage;
+                                break;
+                            }
                         }
                     }
+
                 }
             }
         }

@@ -15,16 +15,18 @@ Responses:
 Use: Connect to the server. This command must be called before any other command (Except TestPing) can be called. Once connected you can do any number of matches under the single connection.
 Parameters: 
 	- {User} The name for your client. This user does not need to be unique accross all game sessions. It does need to be unique for the individual match.
-	- {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
-	- {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
+	- Optional {Channel} The name of the channel you want to connect to. If the channel does not exist then the server will create it. If the channel exists you must have the correct password
+	- Optional {Channel Password} The password for the channel. If the channel exists then the password must match the existing channel.
 	- {Is X,Y Coordinate format} Accepts "T" or "F". If your coordinates are passed in as (X,Y) with the upperleft corner being (0,0) then pass "T". Passing "F" will assume you are passing in (row,column).
 	- Optional {GridWidth} Optional parameter, sets the width of the grid. If not passed in the default is 7. If you pass in GridWidth you must pass in GridHeight.
 	- Optional {GridHeight} Optional parameter, sets the height of the grid. If not passed in the default is 7. If you pass in GridHeight you must pass in GridWidth
 Command: Connection|{User}|{Channel}|{Channel Password}|{Is X,Y Coordinate format}|{GridWidth}|{GridHeight}<END>
 Responses:
-	- "Accept|{Return Token}|{Number of Clients connected}" - Connection was accepted
+	- "Accept|{Return Token}|{Number of Clients connected}|{Channel Name}|{Channel Password}" - Connection was accepted
 		- {Return Token} Unique token that will be used for all subsequent server calls. The token is unique to the Session/Channel combo.
 		- {Number of Clients connected} Number of clients connected including your client.
+		- {Channel Name} Return back the channel name, if no channel name/pwd was passed in then use this to get your channel name.
+		- {Channel Password} Returns back the password, if no channel name/pwd was passed in then use this to get your channel password.
 	- "InvalidRequest|{Reason}"
 		- {Reason} The second parameter holds the reason why the request was invalid.
 	- "Reject|{Reason}"

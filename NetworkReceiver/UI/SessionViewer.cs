@@ -189,15 +189,18 @@ namespace NetworkReceiver
                     }
                 }
 
-                //On interval pass the aggragate stats to the Database writer thread
-                if ((DateTime.Now - StatsLastWritten).TotalMinutes >= 5)
+                if (WriteStatsToDB)
                 {
-                    lock (DatabaseWriter.MatchesToWrite)
+                    //On interval pass the aggragate stats to the Database writer thread
+                    if ((DateTime.Now - StatsLastWritten).TotalMinutes >= 5)
                     {
-                        DatabaseWriter.MatchesToWrite.AddRange(AggragateStats);
-                        AggragateStats = new List<MatchHistoryAggregate>();
-                        StatsLastWritten = DateTime.Now;
-                        lblLastDbWrite.Text = StatsLastWritten.ToString("yyyy-MM-dd hh:mm:ss");
+                        lock (DatabaseWriter.MatchesToWrite)
+                        {
+                            DatabaseWriter.MatchesToWrite.AddRange(AggragateStats);
+                            AggragateStats = new List<MatchHistoryAggregate>();
+                            StatsLastWritten = DateTime.Now;
+                            lblLastDbWrite.Text = StatsLastWritten.ToString("yyyy-MM-dd hh:mm:ss");
+                        }
                     }
                 }
 
@@ -298,6 +301,17 @@ namespace NetworkReceiver
             dbViewer.SqlServerInfo = conInfo;
             dbViewer.logInfo = logInfo;
             dbViewer.ShowDialog();
+        }
+        private void cbxDisableDbWrite_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbxDisableDbWrite.Checked)
+            {
+                WriteStatsToDB = false;
+            }
+            else
+            {
+                WriteStatsToDB = true;
+            }
         }
 
         //Private functions
