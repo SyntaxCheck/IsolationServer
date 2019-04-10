@@ -12,6 +12,8 @@ public class MatchSession
     public const int MATCH_HISTORY_COUNT_TO_KEEP = 1000;
     private LogInfo logInfo;
     public bool SessionExpired { get; set; }
+    public bool IsAutoJoinMatch { get; set; }
+    public bool IsMatchFull { get; set; }
     public int GridWidth { get; set; }
     public int GridHeight { get; set; }
     public int SessionId { get; set; }
@@ -110,6 +112,8 @@ public class MatchSession
         ChannelPassword = String.Empty;
         StartingUser = String.Empty;
         SessionEndDate = null;
+        IsAutoJoinMatch = false;
+        IsMatchFull = false;
 
         PossibleMoveDirections = new List<Point>();
         PossibleMoveDirections.Add(new Point(2, 1));
@@ -425,8 +429,9 @@ public class MatchSession
         if (String.IsNullOrEmpty(Channel))
         {
             //If this is the first client to connect this way then generate a random id
-            Channel = Rng.Next(1000000000, 999999999).ToString();
+            Channel = Rng.Next(100000000, 999999999).ToString();
             ChannelPassword = "DefaulPwd";
+            IsAutoJoinMatch = true;
         }
 
         return HandleRequestConnection(userName, Channel, ChannelPassword, isYXFormat, 7, 7);
@@ -479,9 +484,14 @@ public class MatchSession
                             {
                                 SecondUser = userName;
                                 SecondUserToken = GetRandomToken();
-                                rtn = "Accept|" + SecondUserToken + "|" + GetNumberOfConnected().ToString();
+                                rtn = "Accept|" + SecondUserToken + "|" + GetNumberOfConnected().ToString() + "|" + Channel + "|" + ChannelPassword;
                                 SetXYFormat(SecondUserToken, isYXFormat);
                                 SetUserPing(SecondUserToken);
+                            }
+
+                            if (GetNumberOfConnected() == 2)
+                            {
+                                IsMatchFull = true;
                             }
                         }
                     }

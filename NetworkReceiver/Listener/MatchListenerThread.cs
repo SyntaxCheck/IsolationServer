@@ -160,33 +160,57 @@ public class MatchListenerThread
                     split[i] = split[i].Trim();
                 }
 
-                if (split.Length >= 4)
+                if (split.Length > 0)
                 {
                     string command = split[0];
-                    string channel = split[2];
-                    string channelPwd = split[3];
-
+                    string channel = String.Empty;
+                    string channelPwd = String.Empty;
                     bool messageForwarded = false;
-                    for (int i = 0; i < Sessions.Count(); i++)
+                    bool hasChannelInfo = false;
+
+                    if (split.Length >= 4)
                     {
-                        string validateMessage = String.Empty;
-                        if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
-                        {
-                            messageForwarded = true;
-                            rtn = Sessions[i].HandleRequest(data);
-                            break;
-                        }
-                        else if (!String.IsNullOrEmpty(validateMessage))
-                        {
-                            rtn = validateMessage;
-                            break;
-                        }
+                        channel = split[2];
+                        channelPwd = split[3];
+                        hasChannelInfo = true;
                     }
 
-                    //Check to see if we need to open a new session
-                    if (!messageForwarded && String.IsNullOrEmpty(rtn))
+                    if (command.Trim().ToUpper() == "CONNECTION")
                     {
-                        if (command.Trim().ToUpper() == "CONNECTION")
+                        if (!hasChannelInfo) //Handle Auto join
+                        {
+                            for (int i = 0; i < Sessions.Count(); i++)
+                            {
+                                if (!Sessions[i].IsMatchFull && Sessions[i].IsAutoJoinMatch)
+                                {
+                                    messageForwarded = true;
+                                    rtn = Sessions[i].HandleRequest(data);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < Sessions.Count(); i++)
+                            {
+                                string validateMessage = String.Empty;
+                                if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
+                                {
+                                    messageForwarded = true;
+                                    rtn = Sessions[i].HandleRequest(data);
+                                    break;
+                                }
+                                else if (!String.IsNullOrEmpty(validateMessage))
+                                {
+                                    messageForwarded = true;
+                                    rtn = validateMessage;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //No match exists if the message has not been forwarded, create new one
+                        if (!messageForwarded)
                         {
                             int newSessionId = 1;
                             if (Sessions.Count() > 0)
@@ -198,12 +222,26 @@ public class MatchListenerThread
                             rtn = newSession.HandleRequest(data);
                             Sessions.Add(newSession);
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Sessions.Count(); i++)
                         {
-                            //There is no existing session and the client is not doing a "Connection" command, return error
-                            rtn = "InvalidRequest|No valid game session";
+                            string validateMessage = String.Empty;
+                            if (IsCorrectSession(channel, channelPwd, Sessions[i], ref validateMessage))
+                            {
+                                messageForwarded = true;
+                                rtn = Sessions[i].HandleRequest(data);
+                                break;
+                            }
+                            else if (!String.IsNullOrEmpty(validateMessage))
+                            {
+                                rtn = validateMessage;
+                                break;
+                            }
                         }
                     }
+
                 }
             }
         }
