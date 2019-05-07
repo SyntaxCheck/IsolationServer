@@ -13,3 +13,9 @@
 	ClientTwoWin numeric(9,0),
 	CONSTRAINT Q_MATCHHISTORY_MATCHUP_00001 PRIMARY KEY (Matchup)
 )
+Create Table NeuralNetworkDataSets
+(
+	DataPointId int identity,
+	MapState varchar(1000),
+	Move varchar(10)
+)

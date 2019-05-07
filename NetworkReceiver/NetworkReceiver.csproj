@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SynUtil, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\SynUtil.dll</HintPath>
@@ -51,10 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataExport\DataSet.cs" />
+    <Compile Include="DataExport\NeuralNetworkDataSet.cs" />
     <Compile Include="Listener\AiStartingPosition.cs" />
     <Compile Include="Listener\DatabaseWriterThread.cs" />
     <Compile Include="Listener\IMatchSession.cs" />
     <Compile Include="Listener\MatchHistoryAggregate.cs" />
+    <Compile Include="Listener\MatchHistoryParser.cs" />
     <Compile Include="Listener\MatchSessionBase.cs" />
     <Compile Include="TimeSpanFormatter.cs" />
     <Compile Include="Listener\MatchHistory.cs" />
@@ -109,6 +115,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

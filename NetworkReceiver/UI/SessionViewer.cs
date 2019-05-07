@@ -1,4 +1,5 @@
-﻿using SynUtil.Database.MSSQL;
+﻿using Newtonsoft.Json;
+using SynUtil.Database.MSSQL;
 using SynUtil.FileSystem;
 using System;
 using System.Collections.Generic;
@@ -194,6 +195,7 @@ namespace NetworkReceiver
                     //On interval pass the aggragate stats to the Database writer thread
                     if ((DateTime.Now - StatsLastWritten).TotalMinutes >= 5)
                     {
+                        ExportNeuralNetworkToFile(); //Export the Neural Network stats before we clear them
                         lock (DatabaseWriter.MatchesToWrite)
                         {
                             DatabaseWriter.MatchesToWrite.AddRange(AggragateStats);
@@ -302,6 +304,10 @@ namespace NetworkReceiver
             dbViewer.logInfo = logInfo;
             dbViewer.ShowDialog();
         }
+        private void btnExportNeuralNetwork_Click(object sender, EventArgs e)
+        {
+            ExportNeuralNetworkToFile();
+        }
         private void cbxDisableDbWrite_CheckedChanged(object sender, EventArgs e)
         {
             if (cbxDisableDbWrite.Checked)
@@ -315,6 +321,31 @@ namespace NetworkReceiver
         }
 
         //Private functions
+        private void ExportNeuralNetworkToFile()
+        {
+            if (!cbxDisableNeuralNetworkAutoWrite.Checked)
+            {
+                MatchHistoryParser parser = new MatchHistoryParser();
+                List<NeuralNetworkDataSet> data = new List<NeuralNetworkDataSet>();
+                List<DataSet> dataSets = new List<DataSet>();
+
+                for (int i = 0; i < MatchListener.Sessions.Count(); i++)
+                {
+                    for (int k = 0; k < MatchListener.Sessions[i].CompletedMatches.Count(); k++)
+                    {
+                        data.AddRange(parser.GetIndividualMovesForWinner(MatchListener.Sessions[i].CompletedMatches[k]));
+                    }
+                }
+
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    dataSets.Add(data[i].ToDataSet());
+                }
+
+                string jsonText = JsonConvert.SerializeObject(dataSets);
+                File.WriteAllText("NeuralNetwork " + DateTime.Now.ToString("yyyyMMddhhmm") + ".txt", jsonText);
+            }
+        }
         public int GetScroll(TextBox tbxToScroll, ScrollBars scrollBar)
         {
             return GetScrollPos((IntPtr)tbxToScroll.Handle, (int)scrollBar);

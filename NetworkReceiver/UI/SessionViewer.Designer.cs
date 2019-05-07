@@ -47,7 +47,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbxDisableDbWrite = new System.Windows.Forms.CheckBox();
             this.btnWriteNow = new System.Windows.Forms.Button();
+            this.btnDbViewer = new System.Windows.Forms.Button();
             this.lblLastDbWrite = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.btnGetSessionMatches = new System.Windows.Forms.Button();
@@ -63,8 +65,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.lblUptime = new System.Windows.Forms.Label();
-            this.btnDbViewer = new System.Windows.Forms.Button();
-            this.cbxDisableDbWrite = new System.Windows.Forms.CheckBox();
+            this.btnExportNeuralNetwork = new System.Windows.Forms.Button();
+            this.cbxDisableNeuralNetworkAutoWrite = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -249,6 +251,17 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Server Controls";
             // 
+            // cbxDisableDbWrite
+            // 
+            this.cbxDisableDbWrite.AutoSize = true;
+            this.cbxDisableDbWrite.Location = new System.Drawing.Point(41, 167);
+            this.cbxDisableDbWrite.Name = "cbxDisableDbWrite";
+            this.cbxDisableDbWrite.Size = new System.Drawing.Size(107, 17);
+            this.cbxDisableDbWrite.TabIndex = 6;
+            this.cbxDisableDbWrite.Text = "Disable DB Write";
+            this.cbxDisableDbWrite.UseVisualStyleBackColor = true;
+            this.cbxDisableDbWrite.CheckedChanged += new System.EventHandler(this.cbxDisableDbWrite_CheckedChanged);
+            // 
             // btnWriteNow
             // 
             this.btnWriteNow.Location = new System.Drawing.Point(169, 197);
@@ -258,6 +271,16 @@
             this.btnWriteNow.Text = "Write Now";
             this.btnWriteNow.UseVisualStyleBackColor = true;
             this.btnWriteNow.Click += new System.EventHandler(this.btnWriteNow_Click);
+            // 
+            // btnDbViewer
+            // 
+            this.btnDbViewer.Location = new System.Drawing.Point(167, 163);
+            this.btnDbViewer.Name = "btnDbViewer";
+            this.btnDbViewer.Size = new System.Drawing.Size(75, 23);
+            this.btnDbViewer.TabIndex = 5;
+            this.btnDbViewer.Text = "DB Viewer";
+            this.btnDbViewer.UseVisualStyleBackColor = true;
+            this.btnDbViewer.Click += new System.EventHandler(this.btnDbViewer_Click);
             // 
             // lblLastDbWrite
             // 
@@ -395,32 +418,35 @@
             this.lblUptime.TabIndex = 4;
             this.lblUptime.Text = "Server Uptime:";
             // 
-            // btnDbViewer
+            // btnExportNeuralNetwork
             // 
-            this.btnDbViewer.Location = new System.Drawing.Point(167, 163);
-            this.btnDbViewer.Name = "btnDbViewer";
-            this.btnDbViewer.Size = new System.Drawing.Size(75, 23);
-            this.btnDbViewer.TabIndex = 5;
-            this.btnDbViewer.Text = "DB Viewer";
-            this.btnDbViewer.UseVisualStyleBackColor = true;
-            this.btnDbViewer.Click += new System.EventHandler(this.btnDbViewer_Click);
+            this.btnExportNeuralNetwork.Location = new System.Drawing.Point(480, 363);
+            this.btnExportNeuralNetwork.Name = "btnExportNeuralNetwork";
+            this.btnExportNeuralNetwork.Size = new System.Drawing.Size(127, 23);
+            this.btnExportNeuralNetwork.TabIndex = 5;
+            this.btnExportNeuralNetwork.Text = "Export Neural Network";
+            this.btnExportNeuralNetwork.UseVisualStyleBackColor = true;
+            this.btnExportNeuralNetwork.Click += new System.EventHandler(this.btnExportNeuralNetwork_Click);
             // 
-            // cbxDisableDbWrite
+            // cbxDisableNeuralNetworkAutoWrite
             // 
-            this.cbxDisableDbWrite.AutoSize = true;
-            this.cbxDisableDbWrite.Location = new System.Drawing.Point(41, 167);
-            this.cbxDisableDbWrite.Name = "cbxDisableDbWrite";
-            this.cbxDisableDbWrite.Size = new System.Drawing.Size(107, 17);
-            this.cbxDisableDbWrite.TabIndex = 6;
-            this.cbxDisableDbWrite.Text = "Disable DB Write";
-            this.cbxDisableDbWrite.UseVisualStyleBackColor = true;
-            this.cbxDisableDbWrite.CheckedChanged += new System.EventHandler(this.cbxDisableDbWrite_CheckedChanged);
+            this.cbxDisableNeuralNetworkAutoWrite.AutoSize = true;
+            this.cbxDisableNeuralNetworkAutoWrite.Checked = true;
+            this.cbxDisableNeuralNetworkAutoWrite.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxDisableNeuralNetworkAutoWrite.Location = new System.Drawing.Point(366, 367);
+            this.cbxDisableNeuralNetworkAutoWrite.Name = "cbxDisableNeuralNetworkAutoWrite";
+            this.cbxDisableNeuralNetworkAutoWrite.Size = new System.Drawing.Size(108, 17);
+            this.cbxDisableNeuralNetworkAutoWrite.TabIndex = 6;
+            this.cbxDisableNeuralNetworkAutoWrite.Text = "Disable NN Write";
+            this.cbxDisableNeuralNetworkAutoWrite.UseVisualStyleBackColor = true;
             // 
             // SessionViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 446);
+            this.Controls.Add(this.cbxDisableNeuralNetworkAutoWrite);
+            this.Controls.Add(this.btnExportNeuralNetwork);
             this.Controls.Add(this.lblUptime);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -478,6 +504,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblCommandsPerSecond;
         private System.Windows.Forms.CheckBox cbxDisableDbWrite;
+        private System.Windows.Forms.Button btnExportNeuralNetwork;
+        private System.Windows.Forms.CheckBox cbxDisableNeuralNetworkAutoWrite;
     }
 }
 
