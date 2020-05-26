@@ -175,7 +175,9 @@ public class MatchHistoryParser
     }
     public int[] GetPossibleMoves(GameGridSquare[,] gridIn, Point moveMade, Point PrevMove)
     {
-        int[] possibleMoves = new int[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        int invalidMovePoints = -1;
+        int validMovePoints = 1;
+        int[] possibleMoves = new int[8] { invalidMovePoints, invalidMovePoints, invalidMovePoints, invalidMovePoints, invalidMovePoints, invalidMovePoints, invalidMovePoints, invalidMovePoints };
 
         for (int i = 0; i < possibleMoveDirections.Count(); i++)
         {
@@ -183,22 +185,22 @@ public class MatchHistoryParser
 
             if (tmpMoveP.X < 0 || tmpMoveP.Y < 0 || tmpMoveP.X >= gridIn.GetLength(0) || tmpMoveP.Y >= gridIn.GetLength(1))
             {
-                possibleMoves[i] = 0;
+                possibleMoves[i] = invalidMovePoints;
             }
             else if (gridIn[tmpMoveP.X, tmpMoveP.Y].State == GridState.Blocked || gridIn[tmpMoveP.X, tmpMoveP.Y].State == GridState.Occupied)
             {
                 if (tmpMoveP.Equals(moveMade))
                 {
-                    possibleMoves[i] = 1;
+                    possibleMoves[i] = validMovePoints;
                 }
                 else
                 {
-                    possibleMoves[i] = 0;
+                    possibleMoves[i] = invalidMovePoints;
                 }
             }
             else
             {
-                possibleMoves[i] = 1;
+                possibleMoves[i] = validMovePoints;
             }
         }
 
